@@ -1,4 +1,4 @@
-- name: Create Homework Assignment project
+#- name: Create Homework Assignment project
 
 
 - name: Machine Credentail to connect to workstation using openstack.pub
