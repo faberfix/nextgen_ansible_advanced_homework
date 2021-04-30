@@ -1,17 +1,25 @@
-#- name: Create Homework Assignment project
-
+- name: Create Homework Assignment project
+  tower_project:
+    name: "{{ proj_name }}"
+    description: Homework Assignment
+    organization: "{{ org_name }}"
+    scm_type: git
+    scm_branch: solution-nextgen_ansible_advanced_homework
+    scm_url: "{{ scm_url }}"
+    scm_update_on_launch: yes
+    state: present
 
 - name: Machine Credentail to connect to workstation using openstack.pub
   tower_credential:
-    name: Connect_to_workstation
-    organization: Default
+    name: "{{ ssh_cred_name }}"
+    organization: "{{ org_name }}"
     state: present
     kind: ssh
     tower_host: tower1.{{tower_GUID}}.example.opentlc.com
-    tower_username: admin
-    tower_password: r3dh4t1!
-    ssh_key_data: "/root/.ssh/openstack.pem"
-    username: cloud-user
+    tower_username: "{{ user_name }}"
+    tower_password: "{{ password }}"
+    ssh_key_data: "{{ lookup('file', '/root/.ssh/openstack.pem') }}"
+    username: "{{ user_cred_name }}"
 
 - name: Create Inventory
   command: |
@@ -29,8 +37,8 @@
     inventory: "{{static_inventory_name}}"
     state: present
     tower_host: tower1.{{tower_GUID}}.example.opentlc.com
-    tower_username: admin
-    tower_password: r3dh4t1!
+    tower_username: "{{ user_name }}"
+    tower_password: "{{ password }}"
     tower_verify_ssl: no
 
 - name: Associate workstation host to group 
@@ -41,14 +49,14 @@
 - name: Tower Creds key file
   tower_credential:
     name: "{{ opentlc_cred_name }}"
-    organization: Default
+    organization: "{{ org_name }}"
     state: present
     kind: ssh
     tower_host: tower1.{{tower_GUID}}.example.opentlc.com
-    tower_username: admin
-    tower_password: r3dh4t1!
+    tower_username: "{{ user_name }}"
+    tower_password: "{{ password }}"
     tower_verify_ssl: no
-    ssh_key_data: /root/.ssh/mykey.pem
+    ssh_key_data: "{{ lookup('file', '/root/.ssh/mykey.pem') }}"
     username: "{{ opentlc_login }}"
 
 - name: Remove secret
