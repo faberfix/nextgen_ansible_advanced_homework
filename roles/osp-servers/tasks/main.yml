@@ -1,3 +1,27 @@
 ---
+- name: Create instances
+  os_server:
+    cloud: openstack
+    state: "{{ _osp_servers.value.state | default('present') }}"
+    name: "{{ _osp_servers.value.name }}"
+    image: "{{ _osp_servers.value.image }}"
+    key_name: "{{ _osp_servers.value.key_name }}"
+    security_groups: "{{ _osp_servers.value.security_group }}"
+    delete_fip: yes
+    flavor: "{{ _osp_servers.value.flavor }}"
+    nics:
+      - net-name: int_network
+    meta:
+      group: "{{ _osp_servers.value.meta[0].group }}"
+      deployment_name: "{{ _osp_servers.value.meta[0].deployment_name }}"
+    userdata: |
+      #!/bin/bash
+      curl -o /tmp/openstack.pub http://www.opentlc.com/download/ansible_bootcamp/openstack_keys/openstack.pub
+      cat /tmp/openstack.pub >> /home/cloud-user/.ssh/authorized_keys
+  loop: "{{ osp_servers | dict2items }}"
+  loop_control:
+    loop_var: _osp_servers
+    label: "{{ _osp_servers.value.name }}"
 
-# tasks file for osp.servers
+
+
