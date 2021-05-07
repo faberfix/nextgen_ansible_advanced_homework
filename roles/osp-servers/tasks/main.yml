@@ -55,6 +55,17 @@
     label: "{{ item.name }}"
 
 
+- name: Wait for server to be available
+  wait_for:
+    host: "{{ item.public_v4 }}"
+    port: 22
+    search_regex: OpenSSH
+    timeout: 120
+  delegate_to: "{{ inventory_hostname }}"
+  with_items:
+    - "{{ result_os_servers.ansible_facts.openstack_servers }}"
+
+
 - name: Add in mem hosts
   add_host:
     name: "{{ item.public_v4 }}"
