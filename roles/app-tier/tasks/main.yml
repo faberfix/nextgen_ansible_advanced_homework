@@ -1,2 +1,22 @@
 ---
+- name: Install Tomcat
+  package:
+    name: "{{ payload }}"
+    state: present
+    
+- name: Create the Tomcat content directory
+  file:
+    path: "{{ tomcat_web_root }}"
+    state: directory
 
+- name: Change the main page of Tomcat
+  template:
+    src: index.html.j2
+    dest: "{{ tomcat_web_root }}"/index.html
+    mode: 0644
+
+- name: Enable Tomcat
+  service:
+    name: "{{ payload }}"
+    state: started
+    enabled: true
