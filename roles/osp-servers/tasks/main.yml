@@ -24,4 +24,46 @@
     label: "{{ _osp_servers.value.name }}"
 
 
+- name: Add floating IP to instances
+  os_floating_ip:
+    cloud: openstack
+    state: "{{ _osp_servers.value.state | default('present') }}"
+    reuse: yes
+    server: "{{ _osp_servers.value.name }}"
+    network: ext_network
+    wait: yes
+    timeout: 200
+  loop: "{{ osp_servers | dict2items }}"
+  loop_control:
+    loop_var: _osp_servers
+    label: "{{ _osp_servers.value.name }}"
+  register: result_floating_ips
+
+
+- name: Fetch instance information
+  openstack.cloud.server_info:
+    cloud: openstack
+    region_name: regionOne
+  register: result_os_servers
+
+
+- name: Show instance
+  debug:
+    msg: "{{ item.name }} {{ item.public_v4 }}"
+  loop: "{{ result_os_servers.openstack_servers }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+
+- name: Add in mem hosts
+  add_host:
+    name: "{{ item.public_v4 }}"
+    group:
+      - "{{ item.metadata.group }}"
+      - "{{ item.metadata.deployment_name }}"
+  changed_when: no
+  loop: "{{ result_os_servers.openstack_servers }}"
+  loop_control:
+    label: "{{ item.name }}"
+
 
