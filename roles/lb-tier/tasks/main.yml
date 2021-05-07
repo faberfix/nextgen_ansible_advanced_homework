@@ -1,3 +1,23 @@
 ---
 
+- name: Install load balancer packages
+  package:
+    name  : "{{ payload }}"
+    state : present
+
+
+- name: Configure haproxy load balancing
+  template:
+    src    : "{{ payload }}.cfg.j2"
+    dest   : "/etc/{{ payload }}/{{ payload }}.cfg"
+  notify   : restart_haproxy
+
+
+- name: Enable Haproxy
+  service:
+    name  : "{{ payload }}"
+    state : started
+    enabled: true
+
+
 
