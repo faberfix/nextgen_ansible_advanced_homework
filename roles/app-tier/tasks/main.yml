@@ -12,7 +12,7 @@
 - name: Change the main page of Tomcat
   template:
     src: index.html.j2
-    dest: "{{ tomcat_web_root }}"/index.html
+    dest: /usr/share/tomcat/webapps/ROOT/index.html
     mode: 0644
 
 - name: Enable Tomcat
