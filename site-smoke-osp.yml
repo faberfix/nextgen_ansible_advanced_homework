@@ -2,7 +2,30 @@
   gather_facts: false
   tasks:
   - name: OpenStack servers
+    os_server_facts:
+     cloud: openstack
+     server: 'frontend'
+    register: osp_fact
+
+
+  - name: Wait until app is up
+    wait_for:
+      host: "{{ item.public_v4 }}"
+      port: 80
+      delay: 10
+    with_items:
+      - "{{ osp_fact.ansible_facts.openstack_servers }}"
+
+
   - name: Curl website
+    uri:
+     url: "http://{{item.public_v4}}"
+     return_content: yes
+    with_items:
+      - "{{ osp_fact.ansible_facts.openstack_servers }}"
+    register: webpage
+
+
 
   - name: Fail if 'Ansible has done its job' is not in the page content
     fail:
