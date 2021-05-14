@@ -4,7 +4,7 @@
     description: Homework Assignment
     organization: "{{ org_name }}"
     scm_type: git
-    scm_branch: solution-nextgen_ansible_advanced_homework
+    scm_branch: "{{ scm_branch }}"
     scm_url: "{{ scm_url }}"
     scm_update_on_launch: yes
     state: present
