@@ -3,7 +3,13 @@
 - name: Fetch Instance Info
   os_server_info:
     cloud: openstack
-    register: result
+    region_name: regionOne
+  register: r_os_servers
+
+
+- name: show my register
+  debug:
+    var: r_os_servers
 
 
 - name: Add host 
