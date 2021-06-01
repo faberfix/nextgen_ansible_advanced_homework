@@ -1,7 +1,6 @@
 ---
 - hosts: workstation
   become: true
-  become_method: sudo
   gather_facts: false
 
   tasks:
@@ -52,4 +51,4 @@
         chdir: /root
     - name: Wait for mail
       pause:
-        minutes: 5 
+        minutes: 10 
