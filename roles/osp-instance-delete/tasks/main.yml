@@ -1,15 +1,17 @@
 ---
 - name: Fetch instance information
-  os_server_info:
+  os_server_facts:
     cloud: openstack
     region_name: regionOne
   register: r_os_servers
-  
+ 
+- name: debug facts
+  debug:
+   var: r_os_servers
+
 - name: Delete instances
   os_server:
     cloud: openstack
     state: absent
     name: "{{ item.name }}"
-  loop: "{{ r_os_servers }}"
-  loop_control:
-    label: "{{ item.name }}"
+  loop: "{{ r_os_servers.ansible_facts.openstack_servers }}"
