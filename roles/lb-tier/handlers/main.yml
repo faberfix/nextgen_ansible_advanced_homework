@@ -1,10 +1,10 @@
 ---
 - name: start_{{ payload }}
   service:
-    name: {{ payload }}
+    name: "{{ payload }}"
     state: started
 
 - name: restart_{{ payload }}
   service:
-    name: {{ payload }}
+    name: "{{ payload }}"
     state: restarted
