@@ -83,6 +83,6 @@
       - "{{ item.metadata.group }}"
       - "{{ item.metadata.deployment_name }}"
   changed_when: no
-  loop: "{{ r_os_servers.openstack_servers }}"
+  loop: "{{ result_os_servers.openstack_servers }}"
   loop_control:
     label: "{{ item.name }}"
