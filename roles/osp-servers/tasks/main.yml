@@ -12,8 +12,8 @@
     nics:
       - net-name: int_network
     meta:
-      - group: "{{ _osp_servers.value.meta[0].group }}"
-      - deployment_name: "{{ _osp_servers.value.meta[0].deployment_name }}"
+       group: "{{ _osp_servers.value.meta[0].group }}"
+       deployment_name: "{{ _osp_servers.value.meta[0].deployment_name }}"
     userdata: |
       #!/bin/bash
       curl -o /tmp/openstack.pub http://www.opentlc.com/download/ansible_bootcamp/openstack_keys/openstack.pub
