@@ -18,4 +18,4 @@
     group: 
       - "{{ item.metadata.group }}"
       - "{{ item.metadata.deployment_name }}"
-  loop: "{{ r_os_servers.openstack_servers }}"
+  with_items: "{{ r_os_servers.openstack_servers }}"
