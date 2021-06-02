@@ -45,7 +45,7 @@
 
 
 - name: Fetch instance information
-  os_server_info:
+  os_server_facts:
     cloud: openstack
     region_name: regionOne
   register: result_os_servers
@@ -59,20 +59,17 @@
 - name: Show instance name and IP
   debug:
     msg: "{{ item.name }} {{ item.public_v4 }}"
-  loop: "{{ result_os_servers.openstack_servers }}"
+  loop: "{{ result_os_servers.ansible_facts.openstack_servers }}"
   loop_control:
     label: "{{ item.name }}"
 
 
-- name: Add in mem hosts
-  add_host:
-    name: "{{ item.public_v4 }}"
-    group:
-      - "{{ item.metadata.group }}"
-      - "{{ item.metadata.deployment_name }}"
-  changed_when: no
-  loop: "{{ result_os_servers.openstack_servers }}"
-  loop_control:
-    label: "{{ item.name }}"
-
-
+- name: Wait for server to be available
+  wait_for:
+    host: "{{ item.public_v4 }}"
+    port: 22
+    search_regex: OpenSSH
+    timeout: 120
+  delegate_to: "{{ inventory_hostname }}"
+  with_items:
+    - "{{ result_os_servers.ansible_facts.openstack_servers }}"
