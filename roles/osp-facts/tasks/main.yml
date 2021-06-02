@@ -15,7 +15,5 @@
 - name: Add host 
   add_host: 
     name: "{{ item.public_v4 }}" 
-    group: 
-      - "{{ item.metadata.group }}"
-      - "{{ item.metadata.deployment_name }}"
+    group: "{{ item.metadata.group }}"
   with_items: "{{ r_os_servers.openstack_servers }}"
