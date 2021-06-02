@@ -2,6 +2,7 @@
 - name: Create instances
   os_server:
     cloud: openstack
+    state: "{{ _osp_servers.value.state | default('present') }}"
     name: "{{ _osp_servers.value.name }}"
     image: "{{ _osp_servers.value.image }}"
     key_name: "{{ _osp_servers.value.key_name }}"
@@ -11,8 +12,8 @@
     nics:
       - net-name: int_network
     meta:
-      group: "{{ _osp_servers.value.meta[0].group }}"
-      deployment_name: "{{ _osp_servers.value.meta[0].deployment_name }}"
+      - group: "{{ _osp_servers.value.meta[0].group }}"
+      - deployment_name: "{{ _osp_servers.value.meta[0].deployment_name }}"
     userdata: |
       #!/bin/bash
       curl -o /tmp/openstack.pub http://www.opentlc.com/download/ansible_bootcamp/openstack_keys/openstack.pub
@@ -45,7 +46,7 @@
 
 
 - name: Fetch instance information
-  os_server_facts:
+  os_server_info:
     cloud: openstack
     region_name: regionOne
   register: result_os_servers
@@ -59,7 +60,7 @@
 - name: Show instance name and IP
   debug:
     msg: "{{ item.name }} {{ item.public_v4 }}"
-  loop: "{{ result_os_servers.ansible_facts.openstack_servers }}"
+  loop: "{{ result_os_servers.openstack_servers }}"
   loop_control:
     label: "{{ item.name }}"
 
@@ -72,4 +73,16 @@
     timeout: 120
   delegate_to: "{{ inventory_hostname }}"
   with_items:
-    - "{{ result_os_servers.ansible_facts.openstack_servers }}"
+    - "{{ result_os_servers.openstack_servers }}"
+
+
+- name: Add in mem hosts
+  add_host:
+    name: "{{ item.public_v4 }}"
+    group:
+      - "{{ item.metadata.group }}"
+      - "{{ item.metadata.deployment_name }}"
+    changed_when: no
+    loop: "{{ r_os_servers.openstack_servers }}"
+    loop_control:
+      label: "{{ item.name }}"
