@@ -72,8 +72,9 @@
     search_regex: OpenSSH
     timeout: 120
   delegate_to: "{{ inventory_hostname }}"
-  with_items:
-    - "{{ result_os_servers.openstack_servers }}"
+  loop: "{{ result_os_servers.openstack_servers }}"
+  loop_control:
+    label: "{{ item.public_v4 }}"
 
 
 - name: Add in mem hosts
